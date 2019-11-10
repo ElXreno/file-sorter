@@ -1,42 +1,19 @@
 use std::error::Error;
 use std::path::PathBuf;
 
-pub struct SortPattern<'a> {
-    pub mime_type: &'a Vec<String>,
-    pub destination_subdir: &'a str,
-}
-
-pub struct Settings<'a> {
-    pub source_dir: &'a PathBuf,
-    pub destination_dir: &'a PathBuf,
-    pub sort_patterns: &'a Vec<SortPattern<'a>>,
-}
+mod settings;
 
 fn main() {
-    let torrents_pattern = SortPattern {
-        mime_type: &vec!["application/x-bittorrent".to_string()],
-        destination_subdir: "torrents",
-    };
-
-    let images_pattern = SortPattern {
-        mime_type: &vec!["image/png".to_string()],
-        destination_subdir: "images",
-    };
-
-    let settings = Settings {
-        source_dir: &PathBuf::from("/home/elxreno/testing/source"),
-        destination_dir: &PathBuf::from("/home/elxreno/testing/destination"),
-        sort_patterns: &vec![torrents_pattern, images_pattern],
-    };
+    let settings = settings::Settings::load();
 
     if !settings.source_dir.is_dir() {
         panic!("Source dir exists and is not a file, exiting.");
     }
 
-    create_dir(settings.source_dir);
-    create_dir(settings.destination_dir);
+    create_dir(&settings.source_dir);
+    create_dir(&settings.destination_dir);
 
-    let files = get_files(settings.source_dir);
+    let files = get_files(&settings.source_dir);
 
     for sort_pattern in settings.sort_patterns {
         let destination_dir = settings
