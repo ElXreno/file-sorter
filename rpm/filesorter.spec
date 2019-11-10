@@ -1,12 +1,12 @@
 %global debug_package %{nil}
 
-%global commit      27689b5ceda5e838000ab39317582ec4f3cd0d2b
+%global commit      1bd34523dc7522018ce67bf8fabc0de5db5b0c84
 %global shortcommit %(c=%{commit}; echo ${c:0:7})
 %global date        20191110
 
 Name:           filesorter
 Version:        0.1.0
-Release:        1.%{date}git%{shortcommit}%{?dist}
+Release:        2.%{date}git%{shortcommit}%{?dist}
 Summary:        Utility for sorting files in directory writen in Rust
 
 License:        GPLv3
@@ -43,5 +43,8 @@ rm -f %{buildroot}%{_prefix}/.crates.toml
 
 
 %changelog
+* Sun Nov 10 2019 ElXreno <elxreno@gmail.com> - 0.1.0-2.20191110git1bd3452
+- Updated commit to 1bd34523dc7522018ce67bf8fabc0de5db5b0c84
+
 * Sun Nov 10 2019 ElXreno <elxreno@gmail.com>
 - Initial packaging
