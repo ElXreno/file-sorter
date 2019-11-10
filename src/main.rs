@@ -48,9 +48,14 @@ fn main() {
         for file in &files {
             let mime_type = tree_magic::from_filepath(file);
             if sort_pattern.mime_type.contains(&mime_type) {
-                match std::fs::copy(file, &destination_dir.join(file.file_name().unwrap())) {
-                    Ok(_o) => println!("Successfully copied {} to {}", file.display(), destination_dir.display()),
-                    Err(e) => panic!("Error {}", e)
+                let destination_file = destination_dir.join(file.file_name().unwrap());
+                match std::fs::copy(file, destination_file) {
+                    Ok(_o) => println!(
+                        "Successfully copied {} to {}",
+                        file.display(),
+                        destination_dir.display()
+                    ),
+                    Err(e) => panic!("Error {}", e),
                 }
             }
         }
