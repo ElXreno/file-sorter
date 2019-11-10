@@ -15,25 +15,26 @@ fn main() {
 
     let files = get_files(&settings.source_dir);
 
-    for sort_pattern in settings.sort_patterns {
-        let destination_dir = settings
-            .destination_dir
-            .join(sort_pattern.destination_subdir);
+    for file in &files {
+        // TODO: Replace tree_magic
+        let mime_type = tree_magic::from_filepath(&file);
+        for pattern in &settings.sort_patterns {
+            if pattern.mime_type.contains(&mime_type) {
+                let destination_dir = &settings.destination_dir.join(&pattern.destination_subdir);
 
-        create_dir(&destination_dir);
+                let destination_file = &destination_dir.join(&file.file_name().unwrap());
 
-        for file in &files {
-            let mime_type = tree_magic::from_filepath(file);
-            if sort_pattern.mime_type.contains(&mime_type) {
-                let destination_file = destination_dir.join(file.file_name().unwrap());
-                match std::fs::copy(file, destination_file) {
+                create_dir(&destination_dir);
+                match std::fs::rename(&file, &destination_file) {
                     Ok(_o) => println!(
-                        "Successfully copied {} to {}",
-                        file.display(),
-                        destination_dir.display()
+                        "Successfully moved {} to {}",
+                        &file.display(),
+                        &destination_dir.display()
                     ),
                     Err(e) => panic!("Error {}", e),
                 }
+
+                break;
             }
         }
     }
@@ -41,8 +42,8 @@ fn main() {
 
 fn create_dir(path: &PathBuf) {
     if !path.exists() {
-        match std::fs::create_dir_all(path) {
-            Ok(()) => println!("{} dir created successfully!", path.display()),
+        match std::fs::create_dir_all(&path) {
+            Ok(()) => println!("{} dir created successfully!", &path.display()),
             Err(e) => panic!("Error {}", e.description()),
         }
     } else {
@@ -51,7 +52,7 @@ fn create_dir(path: &PathBuf) {
         } else {
             panic!(
                 "{} already exists and is not a directory! Remove them manually or change path.",
-                path.display()
+                &path.display()
             );
         }
     }

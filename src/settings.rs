@@ -50,6 +50,7 @@ impl Default for Settings {
                 SortPattern {
                     mime_type: vec![
                         String::from("text/plain"),
+                        String::from("application/vnd.oasis.opendocument.text"),
                         String::from("application/epub+zip"),
                         String::from("image/vnd.djvu"),
                         String::from("application/pdf"),
