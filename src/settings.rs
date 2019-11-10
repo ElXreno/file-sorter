@@ -7,7 +7,7 @@ use serde_derive::{Deserialize, Serialize};
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct SortPattern {
-    pub mime_type: Vec<String>,
+    pub extensions: Vec<String>,
     pub destination_subdir: String,
 }
 
@@ -27,52 +27,54 @@ impl Default for Settings {
             sort_patterns: vec![
                 // Archives
                 SortPattern {
-                    mime_type: vec![
-                        String::from("application/zip"),
-                        String::from("application/x-tar"),
-                        String::from("application/gzip"),
-                        String::from("application/x-xz"),
-                        String::from("application/x-rar-compressed"),
-                        String::from("application/x-7z-compressed"),
+                    extensions: vec![
+                        String::from("zip"),
+                        String::from("tar"),
+                        String::from("tgz"),
+                        String::from("gz"),
+                        String::from("xz"),
+                        String::from("rar"),
+                        String::from("7z"),
                     ],
                     destination_subdir: String::from("archives"),
                 },
                 // Images
                 SortPattern {
-                    mime_type: vec![
-                        String::from("image/png"),
-                        String::from("image/jpeg"),
-                        String::from("image/gif"),
+                    extensions: vec![
+                        String::from("png"),
+                        String::from("jpg"),
+                        String::from("jpeg"),
+                        String::from("gif"),
                     ],
                     destination_subdir: String::from("images"),
                 },
                 // Documents
                 SortPattern {
-                    mime_type: vec![
-                        String::from("text/plain"),
-                        String::from("application/vnd.oasis.opendocument.text"),
-                        String::from("application/epub+zip"),
-                        String::from("image/vnd.djvu"),
-                        String::from("application/pdf"),
+                    extensions: vec![
+                        String::from("txt"),
+                        String::from("odt"),
+                        String::from("epub"),
+                        String::from("djvu"),
+                        String::from("pdf"),
                     ],
                     destination_subdir: String::from("docs"),
                 },
                 // Packages
                 SortPattern {
-                    mime_type: vec![String::from("application/x-rpm")],
+                    extensions: vec![String::from("rpm"), String::from("spec")],
                     destination_subdir: String::from("rpm-packages"),
                 },
                 SortPattern {
-                    mime_type: vec![String::from("application/x-debian-package")],
+                    extensions: vec![String::from("deb")],
                     destination_subdir: String::from("debian-packages"),
                 },
                 SortPattern {
-                    mime_type: vec![String::from("application/vnd.android.package-archive")],
+                    extensions: vec![String::from("apk"), String::from("apkx")],
                     destination_subdir: String::from("apks"),
                 },
                 // Other
                 SortPattern {
-                    mime_type: vec![String::from("application/x-bittorrent")],
+                    extensions: vec![String::from("torrent")],
                     destination_subdir: String::from("torrents"),
                 },
             ],

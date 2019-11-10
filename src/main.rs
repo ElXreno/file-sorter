@@ -16,10 +16,14 @@ fn main() {
     let files = get_files(&settings.source_dir);
 
     for file in &files {
-        // TODO: Replace tree_magic
-        let mime_type = tree_magic::from_filepath(&file);
+        let file_extension = &file
+            .extension()
+            .unwrap()
+            .to_os_string()
+            .into_string()
+            .unwrap();
         for pattern in &settings.sort_patterns {
-            if pattern.mime_type.contains(&mime_type) {
+            if pattern.extensions.contains(file_extension) {
                 let destination_dir = &settings.destination_dir.join(&pattern.destination_subdir);
 
                 let destination_file = &destination_dir.join(&file.file_name().unwrap());
