@@ -1,19 +1,40 @@
-use std::error::Error;
-use std::path::PathBuf;
+use clap::{App, AppSettings, Arg};
 
+mod app;
 mod settings;
+mod utils;
 
 fn main() {
+    // TODO: Add more arguments
+    let matches = App::new(app::NAME)
+        .setting(AppSettings::ArgRequiredElseHelp)
+        .version(app::VERSION)
+        .author(app::AUTHOR)
+        .about(app::ABOUT)
+        .arg(
+            Arg::with_name("sort")
+                .short("s")
+                .long("sort")
+                .help("Runs sorting"),
+        )
+        .get_matches();
+
+    if !matches.is_present("sort") {
+        return;
+    }
+
+    println!("Sorting is running...");
+
     let settings = settings::Settings::load();
 
     if !settings.source_dir.is_dir() {
         panic!("Source dir exists and is not a file, exiting.");
     }
 
-    create_dir(&settings.source_dir);
-    create_dir(&settings.destination_dir);
+    utils::create_dir(&settings.source_dir);
+    utils::create_dir(&settings.destination_dir);
 
-    let files = get_files(&settings.source_dir);
+    let files = utils::get_files(&settings.source_dir);
 
     for file in &files {
         let file_extension = &file
@@ -28,7 +49,7 @@ fn main() {
 
                 let destination_file = &destination_dir.join(&file.file_name().unwrap());
 
-                create_dir(&destination_dir);
+                utils::create_dir(&destination_dir);
                 match std::fs::rename(&file, &destination_file) {
                     Ok(_o) => println!(
                         "Successfully moved {} to {}",
@@ -42,35 +63,6 @@ fn main() {
             }
         }
     }
-}
 
-fn create_dir(path: &PathBuf) {
-    if !path.exists() {
-        match std::fs::create_dir_all(&path) {
-            Ok(()) => println!("{} dir created successfully!", &path.display()),
-            Err(e) => panic!("Error {}", e.description()),
-        }
-    } else {
-        if path.is_dir() {
-            // Already exists
-        } else {
-            panic!(
-                "{} already exists and is not a directory! Remove them manually or change path.",
-                &path.display()
-            );
-        }
-    }
-}
-
-fn get_files(path: &PathBuf) -> Vec<PathBuf> {
-    let mut files: Vec<PathBuf> = Vec::new();
-
-    for entry in std::fs::read_dir(path).unwrap() {
-        let entry = entry.unwrap();
-        if entry.path().is_file() {
-            files.push(entry.path().to_path_buf())
-        }
-    }
-
-    files
+    println!("Done!")
 }
