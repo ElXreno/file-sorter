@@ -6,8 +6,17 @@ version = "0.1.1"
 authors = ["ElXreno <elxreno@gmail.com>"]
 edition = "2018"
 
+
+# Profiles
+[profile.dev]
+opt-level = 2
+panic = "abort"
+
 [profile.release]
+debug = false
+codegen-units = 1
 lto = true
+
 
 [dependencies]
 directories = "2.0.2"
