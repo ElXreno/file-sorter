@@ -60,6 +60,8 @@ fn main() {
     let files = utils::get_files(&settings.source);
 
     for file in &files {
+        // TODO: Fallback to mime-type detection if file doesn't have extension
+        // TODO: Fix work with files without name | Example: .directory .file
         let file_extension = &file
             .extension()
             .unwrap()
