@@ -8,22 +8,22 @@ use serde_derive::{Deserialize, Serialize};
 #[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct SortPattern {
     pub extensions: Vec<String>,
-    pub destination_subdir: String,
+    pub destination: String,
 }
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
 #[serde(default)]
 pub struct Settings {
-    pub source_dir: PathBuf,
-    pub destination_dir: PathBuf,
+    pub source: PathBuf,
+    pub destination: PathBuf,
     pub sort_patterns: Vec<SortPattern>,
 }
 
 impl Default for Settings {
     fn default() -> Self {
         Settings {
-            source_dir: PathBuf::from("/home/elxreno/testing/source"),
-            destination_dir: PathBuf::from("/home/elxreno/testing/destination"),
+            source: PathBuf::from("/home/elxreno/Downloads/"),
+            destination: PathBuf::from("/home/elxreno/Downloads/Sorted"),
             sort_patterns: vec![
                 // Archives
                 SortPattern {
@@ -36,7 +36,7 @@ impl Default for Settings {
                         String::from("rar"),
                         String::from("7z"),
                     ],
-                    destination_subdir: String::from("archives"),
+                    destination: String::from("archives"),
                 },
                 // Images
                 SortPattern {
@@ -46,7 +46,7 @@ impl Default for Settings {
                         String::from("jpeg"),
                         String::from("gif"),
                     ],
-                    destination_subdir: String::from("images"),
+                    destination: String::from("images"),
                 },
                 // Documents
                 SortPattern {
@@ -57,25 +57,25 @@ impl Default for Settings {
                         String::from("djvu"),
                         String::from("pdf"),
                     ],
-                    destination_subdir: String::from("docs"),
+                    destination: String::from("docs"),
                 },
                 // Packages
                 SortPattern {
                     extensions: vec![String::from("rpm"), String::from("spec")],
-                    destination_subdir: String::from("rpm-packages"),
+                    destination: String::from("rpm-packages"),
                 },
                 SortPattern {
                     extensions: vec![String::from("deb")],
-                    destination_subdir: String::from("debian-packages"),
+                    destination: String::from("debian-packages"),
                 },
                 SortPattern {
                     extensions: vec![String::from("apk"), String::from("apkx")],
-                    destination_subdir: String::from("apks"),
+                    destination: String::from("apks"),
                 },
                 // Other
                 SortPattern {
                     extensions: vec![String::from("torrent")],
-                    destination_subdir: String::from("torrents"),
+                    destination: String::from("torrents"),
                 },
             ],
         }

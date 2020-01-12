@@ -27,14 +27,14 @@ fn main() {
 
     let settings = settings::Settings::load();
 
-    if !settings.source_dir.is_dir() {
+    if !settings.source.is_dir() {
         panic!("Source path exists and is not a directory, exiting.");
     }
 
-    utils::create_dir(&settings.source_dir);
-    utils::create_dir(&settings.destination_dir);
+    utils::create_dir(&settings.source);
+    utils::create_dir(&settings.destination);
 
-    let files = utils::get_files(&settings.source_dir);
+    let files = utils::get_files(&settings.source);
 
     for file in &files {
         let file_extension = &file
@@ -45,7 +45,7 @@ fn main() {
             .unwrap();
         for pattern in &settings.sort_patterns {
             if pattern.extensions.contains(file_extension) {
-                let destination_dir = &settings.destination_dir.join(&pattern.destination_subdir);
+                let destination_dir = &settings.destination.join(&pattern.destination);
 
                 let destination_file = &destination_dir.join(&file.file_name().unwrap());
 
