@@ -1,18 +1,20 @@
+#[macro_use]
+extern crate clap;
+
 use clap::{App, AppSettings, Arg};
 use std::path::Path;
 use std::ffi::OsStr;
 
-mod app;
 mod settings;
 mod utils;
 
 fn main() {
     // TODO: Add more arguments
-    let matches = App::new(app::NAME)
+    let matches = App::new(crate_name!())
+        .version(crate_version!())
+        .author(crate_authors!())
+        .about(crate_description!())
         .setting(AppSettings::ArgRequiredElseHelp)
-        .version(app::VERSION)
-        .author(app::AUTHOR)
-        .about(app::ABOUT)
         .arg(
             Arg::with_name("rewrite-config")
                 .long("rewrite-config")
