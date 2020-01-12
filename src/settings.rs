@@ -145,7 +145,7 @@ impl Settings {
         Ok(())
     }
 
-    fn get_settings_path() -> PathBuf {
+    pub fn get_settings_path() -> PathBuf {
         let proj_dirs = ProjectDirs::from("com", "elxreno", "filesorter")
             .expect("System's $HOME directory path not found!");
 
