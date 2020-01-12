@@ -1,5 +1,6 @@
 use clap::{App, AppSettings, Arg};
 use std::path::Path;
+use std::ffi::OsStr;
 
 mod app;
 mod settings;
@@ -62,6 +63,12 @@ fn main() {
     for file in &files {
         // TODO: Fallback to mime-type detection if file doesn't have extension
         // TODO: Fix work with files without name | Example: .directory .file
+
+        // Temporary hack
+        if file.file_name() == Some(OsStr::new(".directory")) {
+            continue;
+        }
+
         let file_extension = &file
             .extension()
             .unwrap()
