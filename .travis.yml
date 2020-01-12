@@ -6,9 +6,6 @@ os:
 language: rust
 rust:
   - stable
-before_script:
-  - rustup component add clippy
 script:
-  - cargo clippy --all-targets --all-features -- -D clippy::all
-  - cargo build --all-targets --all-features
-  - cargo test --all-targets --all-features
+  - cargo build --verbose --locked --all-targets --all-features
+  - cargo test --verbose --locked --all-targets --all-features
