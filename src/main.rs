@@ -28,7 +28,7 @@ fn main() {
     let settings = settings::Settings::load();
 
     if !settings.source_dir.is_dir() {
-        panic!("Source dir exists and is not a file, exiting.");
+        panic!("Source path exists and is not a directory, exiting.");
     }
 
     utils::create_dir(&settings.source_dir);
