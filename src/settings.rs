@@ -38,6 +38,22 @@ impl Default for Settings {
                     ],
                     destination: String::from("archives"),
                 },
+                // Audio
+                SortPattern {
+                    extensions: vec![
+                        String::from("mp3"),
+                        String::from("wav"),
+                        String::from("flac"),
+                        String::from("opus"),
+                        String::from("ogg"),
+                    ],
+                    destination: String::from("audio"),
+                },
+                // Binary
+                SortPattern {
+                    extensions: vec![String::from("exe"), String::from("bin")],
+                    destination: String::from("binary"),
+                },
                 // Images
                 SortPattern {
                     extensions: vec![
@@ -45,6 +61,7 @@ impl Default for Settings {
                         String::from("jpg"),
                         String::from("jpeg"),
                         String::from("gif"),
+                        String::from("tif"),
                     ],
                     destination: String::from("images"),
                 },
