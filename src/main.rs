@@ -2,7 +2,6 @@
 extern crate clap;
 
 use clap::{App, AppSettings, Arg};
-use std::path::Path;
 use std::ffi::OsStr;
 
 mod settings;
@@ -29,21 +28,7 @@ fn main() {
         .get_matches();
 
     if matches.is_present("rewrite-config") {
-        let settings_file = settings::Settings::get_settings_path();
-        let settings_file_old = format!("{}.old", &settings_file.display());
-        if Path::new(&settings_file).exists() {
-            match std::fs::rename(&settings_file, &settings_file_old) {
-                Ok(_o) => {
-                    println!("Moved old settings file to {}", &settings_file_old);
-                }
-                Err(e) => panic!("Error {}", e),
-            }
-        } else {
-            println!("Config file doesn't exists, just creating new...")
-        }
-
-        settings::Settings::load();
-
+        settings::Settings::rewrite_config();
         println!("Done!");
         return;
     }

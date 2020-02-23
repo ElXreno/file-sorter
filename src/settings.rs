@@ -1,6 +1,6 @@
 use std::fs;
 use std::io::Write;
-use std::path::PathBuf;
+use std::path::{Path, PathBuf};
 
 use directories::ProjectDirs;
 use serde_derive::{Deserialize, Serialize};
@@ -124,6 +124,23 @@ impl Settings {
         let default_settings = Self::default();
         default_settings.save_to_file_warn();
         default_settings
+    }
+
+    pub fn rewrite_config() {
+        let settings_file = Settings::get_settings_path();
+        let settings_file_old = format!("{}.old", &settings_file.display());
+        if Path::new(&settings_file).exists() {
+            match std::fs::rename(&settings_file, &settings_file_old) {
+                Ok(_o) => {
+                    println!("Moved old settings file to {}", &settings_file_old);
+                }
+                Err(e) => panic!("Error {}", e),
+            }
+        } else {
+            println!("Config file doesn't exists, just creating new...")
+        }
+
+        Settings::load();
     }
 
     pub fn save_to_file_warn(&self) {
