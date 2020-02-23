@@ -111,7 +111,7 @@ impl Settings {
                     // Rename the corrupted settings file
                     let mut new_path = path.to_owned();
                     new_path.pop();
-                    new_path.push("settings.invalid.json");
+                    new_path.push("settings.json.invalid");
                     if let Err(err) = std::fs::rename(path, new_path) {
                         println!("Failed to rename settings file. {}", err);
                     }
