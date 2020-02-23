@@ -52,12 +52,12 @@ fn main() {
         return;
     }
 
-    println!("Sorting is running...");
+    println!("Starting...");
 
     let settings = settings::Settings::load();
 
     if !settings.source.is_dir() {
-        panic!("Source path exists and is not a directory, exiting.");
+        panic!("Source path exists but is not a directory! Shutting down...");
     }
 
     utils::create_dir(&settings.source);
@@ -69,7 +69,7 @@ fn main() {
         // TODO: Fallback to mime-type detection if file doesn't have extension
         // TODO: Fix work with files without name | Example: .directory .file
 
-        // Temporary hack
+        // HACK
         if file.file_name() == Some(OsStr::new(".directory")) {
             continue;
         }

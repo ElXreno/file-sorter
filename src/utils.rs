@@ -9,7 +9,7 @@ pub fn create_dir(path: &PathBuf) {
         }
     } else if !path.is_dir() {
         panic!(
-            "{} already exists and is not a directory, exiting.",
+            "{} already exists but is not a directory! Shutting down...",
             &path.display()
         );
     }
