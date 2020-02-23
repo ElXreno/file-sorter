@@ -30,18 +30,21 @@ fn main() {
 
     if matches.is_present("rewrite-config") {
         let settings_file = settings::Settings::get_settings_path();
-        let settings_file_dest = format!("{}.old", &settings_file.display());
+        let settings_file_old = format!("{}.old", &settings_file.display());
         if Path::new(&settings_file).exists() {
-            match std::fs::rename(&settings_file, &settings_file_dest) {
+            match std::fs::rename(&settings_file, &settings_file_old) {
                 Ok(_o) => {
-                    settings::Settings::load();
-                    println!("Done!");
+                    println!("Moved old settings file to {}", &settings_file_old);
                 }
                 Err(e) => panic!("Error {}", e),
             }
         } else {
-            println!("Config file doesn't exists, nothing to do.")
+            println!("Config file doesn't exists, just creating new...")
         }
+
+        settings::Settings::load();
+
+        println!("Done!");
         return;
     }
 
