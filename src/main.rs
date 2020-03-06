@@ -1,8 +1,9 @@
 #[macro_use]
 extern crate clap;
 
-use clap::{App, AppSettings, Arg};
 use std::ffi::OsStr;
+
+use clap::{App, AppSettings, Arg};
 
 mod settings;
 mod utils;
@@ -33,10 +34,12 @@ fn main() {
         return;
     }
 
-    if !matches.is_present("sort") {
-        return;
+    if matches.is_present("sort") {
+        sort();
     }
+}
 
+fn sort() {
     println!("Starting...");
 
     let settings = settings::Settings::load();
