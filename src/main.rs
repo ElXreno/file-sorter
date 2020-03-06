@@ -1,6 +1,9 @@
+extern crate chrono;
 #[macro_use]
 extern crate clap;
 
+use chrono::DateTime;
+use chrono::prelude::*;
 use clap::{App, AppSettings, Arg};
 
 mod settings;
@@ -69,7 +72,18 @@ fn sort() {
 
         for pattern in &settings.sort_patterns {
             if pattern.extensions.contains(&file_extension_str) {
-                let destination_dir = settings.destination.join(&pattern.destination);
+                let destination_dir = if settings.use_date_pattern {
+                    let metadata = std::fs::metadata(&file);
+                    let modify_date = DateTime::<Utc>::from(metadata.unwrap().modified().unwrap());
+                    let date_folder = modify_date.format(&settings.date_pattern).to_string();
+
+                    settings
+                        .destination
+                        .join(&date_folder)
+                        .join(&pattern.destination)
+                } else {
+                    settings.destination.join(&pattern.destination)
+                };
 
                 let destination_file = &destination_dir.join(&file.file_name().unwrap());
 

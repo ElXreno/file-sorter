@@ -16,6 +16,8 @@ pub struct SortPattern {
 pub struct Settings {
     pub source: PathBuf,
     pub destination: PathBuf,
+    pub use_date_pattern: bool,
+    pub date_pattern: String,
     pub sort_patterns: Vec<SortPattern>,
 }
 
@@ -24,6 +26,8 @@ impl Default for Settings {
         Settings {
             source: PathBuf::from("/home/elxreno/Downloads/"),
             destination: PathBuf::from("/home/elxreno/Downloads/Sorted"),
+            use_date_pattern: false,
+            date_pattern: String::from("%Y-%m-%d"), // 2020-01-01
             sort_patterns: vec![
                 // Archives
                 SortPattern {
