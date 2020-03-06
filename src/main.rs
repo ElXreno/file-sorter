@@ -48,8 +48,7 @@ fn sort() {
         panic!("Source path exists but is not a directory! Shutting down...");
     }
 
-    utils::create_dir(&settings.source);
-    utils::create_dir(&settings.destination);
+    utils::create_dirs(vec![&settings.source, &settings.destination]);
 
     let files = utils::get_files(&settings.source);
 

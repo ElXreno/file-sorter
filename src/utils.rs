@@ -15,6 +15,12 @@ pub fn create_dir(path: &PathBuf) {
     }
 }
 
+pub fn create_dirs(dirs: Vec<&PathBuf>) {
+    for directory in dirs {
+        create_dir(directory);
+    }
+}
+
 pub fn get_files(path: &PathBuf) -> Vec<PathBuf> {
     let mut files: Vec<PathBuf> = Vec::new();
 
