@@ -11,6 +11,7 @@ mod utils;
 
 fn main() {
     // TODO: Add more arguments
+    // TODO: More customizations in settings
     let matches = App::new(crate_name!())
         .version(crate_version!())
         .author(crate_authors!())
