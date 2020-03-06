@@ -1,8 +1,6 @@
 #[macro_use]
 extern crate clap;
 
-use std::ffi::OsStr;
-
 use clap::{App, AppSettings, Arg};
 
 mod settings;
@@ -52,25 +50,28 @@ fn sort() {
 
     for file in &files {
         // TODO: Fallback to mime-type detection if file doesn't have extension
-        // TODO: Fix work with files without name | Example: .directory .file
 
-        // HACK
-        if file.file_name() == Some(OsStr::new(".directory")) {
+        let file_extension = &file.extension();
+
+        if let None = file_extension {
+            println!(
+                "Failed to get extension for file '{}', skipping it...",
+                &file.display()
+            );
             continue;
         }
 
-        let file_extension = &file
-            .extension()
+        let file_extension_str = &file_extension
             .unwrap()
             .to_os_string()
             .into_string()
             .unwrap();
 
         for pattern in &settings.sort_patterns {
-            if pattern.extensions.contains(file_extension) {
+            if pattern.extensions.contains(&file_extension_str) {
                 let destination_dir = settings.destination.join(&pattern.destination);
 
-                let destination_file = destination_dir.join(&file.file_name().unwrap());
+                let destination_file = &destination_dir.join(&file.file_name().unwrap());
 
                 utils::create_dir(&destination_dir);
                 match std::fs::rename(&file, &destination_file) {
