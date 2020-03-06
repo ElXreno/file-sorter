@@ -1,9 +1,9 @@
-extern crate chrono;
 #[macro_use]
 extern crate clap;
+extern crate chrono;
 
-use chrono::DateTime;
 use chrono::prelude::*;
+use chrono::DateTime;
 use clap::{App, AppSettings, Arg};
 
 mod settings;
