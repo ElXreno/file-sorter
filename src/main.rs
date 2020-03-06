@@ -30,8 +30,6 @@ fn main() {
 
     if matches.is_present("rewrite-config") {
         settings::Settings::rewrite_config();
-        println!("Done!");
-        return;
     }
 
     if matches.is_present("sort") {
@@ -67,6 +65,7 @@ fn sort() {
             .to_os_string()
             .into_string()
             .unwrap();
+
         for pattern in &settings.sort_patterns {
             if pattern.extensions.contains(file_extension) {
                 let destination_dir = settings.destination.join(&pattern.destination);
