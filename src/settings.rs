@@ -32,24 +32,25 @@ impl Default for Settings {
                 // Archives
                 SortPattern {
                     extensions: vec![
-                        String::from("zip"),
+                        String::from("7z"),
+                        String::from("gz"),
+                        String::from("rar"),
                         String::from("tar"),
                         String::from("tgz"),
-                        String::from("gz"),
                         String::from("xz"),
-                        String::from("rar"),
-                        String::from("7z"),
+                        String::from("zip"),
+                        String::from("zst"),
                     ],
                     destination: String::from("archives"),
                 },
                 // Audio
                 SortPattern {
                     extensions: vec![
-                        String::from("mp3"),
-                        String::from("wav"),
                         String::from("flac"),
-                        String::from("opus"),
+                        String::from("mp3"),
                         String::from("ogg"),
+                        String::from("opus"),
+                        String::from("wav"),
                     ],
                     destination: String::from("audio"),
                 },
@@ -61,10 +62,10 @@ impl Default for Settings {
                 // Images
                 SortPattern {
                     extensions: vec![
-                        String::from("png"),
-                        String::from("jpg"),
-                        String::from("jpeg"),
                         String::from("gif"),
+                        String::from("jpeg"),
+                        String::from("jpg"),
+                        String::from("png"),
                         String::from("tif"),
                     ],
                     destination: String::from("images"),
@@ -72,11 +73,14 @@ impl Default for Settings {
                 // Documents
                 SortPattern {
                     extensions: vec![
-                        String::from("txt"),
-                        String::from("odt"),
-                        String::from("epub"),
+                        String::from("csv"),
                         String::from("djvu"),
+                        String::from("epub"),
+                        String::from("odt"),
                         String::from("pdf"),
+                        String::from("ppt"),
+                        String::from("pptx"),
+                        String::from("txt"),
                     ],
                     destination: String::from("docs"),
                 },
@@ -97,6 +101,35 @@ impl Default for Settings {
                 SortPattern {
                     extensions: vec![String::from("torrent")],
                     destination: String::from("torrents"),
+                },
+                SortPattern {
+                    extensions: vec![String::from("jar")],
+                    destination: String::from("jars"),
+                },
+                SortPattern {
+                    extensions: vec![String::from("xml")],
+                    destination: String::from("xml"),
+                },
+                SortPattern {
+                    extensions: vec![String::from("img")],
+                    destination: String::from("raw"),
+                },
+                SortPattern {
+                    extensions: vec![
+                        String::from("eot"),
+                        String::from("ttf"),
+                        String::from("woff"),
+                        String::from("woff2"),
+                    ],
+                    destination: String::from("fonts"),
+                },
+                SortPattern {
+                    extensions: vec![String::from("ovpn")],
+                    destination: String::from("openvpn-profiles"),
+                },
+                SortPattern {
+                    extensions: vec![String::from("pcap")],
+                    destination: String::from("captured-packages"),
                 },
             ],
         }
