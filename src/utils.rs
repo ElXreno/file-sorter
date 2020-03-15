@@ -1,11 +1,10 @@
-use std::error::Error;
 use std::path::PathBuf;
 
 pub fn create_dir(path: &PathBuf) {
     if !path.exists() {
         match std::fs::create_dir_all(&path) {
             Ok(()) => println!("{} dir created successfully!", &path.display()),
-            Err(e) => panic!("Error {}", e.description()),
+            Err(e) => panic!("Error {}", e),
         }
     } else if !path.is_dir() {
         panic!(
