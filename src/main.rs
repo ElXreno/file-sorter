@@ -69,7 +69,8 @@ fn sort() {
             .unwrap()
             .to_os_string()
             .into_string()
-            .unwrap();
+            .unwrap()
+            .to_lowercase();
 
         for pattern in &settings.sort_patterns {
             if pattern.extensions.contains(&file_extension_str) {
