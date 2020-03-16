@@ -3,12 +3,21 @@ name: Rust
 on: [push, pull_request]
 
 jobs:
-  build-linux:
+  build:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ubuntu-latest, ubuntu-16.04]
         rust: [stable, nightly]
+        include:
+          - os: ubuntu-latest
+            artifact_name: filesorter
+            asset_name: linux-amd64
+          - os: windows-latest
+            artifact_name: filesorter.exe
+            asset_name: windows-amd64
+          - os: macos-latest
+            artifact_name: filesorter
+            asset_name: macos-amd64
 
     steps:
       - name: Set up a Rust toolchain
@@ -17,56 +26,24 @@ jobs:
           rust-version: ${{ matrix.rust }}
       - name: Checkout
         uses: actions/checkout@v2
-
-      - name: Build
-        run: cargo build --verbose
 
       - name: Build release
         run: cargo build --release --verbose
 
       - name: Strip release
+        if: contains(matrix.os, 'linux')
         run: strip target/release/filesorter
 
-      - name: Run tests
-        run: cargo test --verbose
-
       - name: Upload Artifacts
         uses: actions/upload-artifact@v1
         with:
-          name: yps_rust-${{ matrix.rust }}-${{ matrix.os }}
-          path: target/release/filesorter
+          name: filesorter-${{ matrix.rust }}-${{ matrix.asset_name }}
+          path: target/release/${{ matrix.artifact_name }}
 
-  build-windows:
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        os: [windows-latest]
-        rust: [stable, nightly]
-        target: [i686-pc-windows-msvc, x86_64-pc-windows-msvc]
-
-    steps:
-      - name: Set up a Rust toolchain
-        uses: hecrj/setup-rust-action@v1.3.1
-        with:
-          rust-version: ${{ matrix.rust }}
-
-      - name: Install rust target
-        run: rustup target add ${{ matrix.target }}
-
-      - name: Checkout
-        uses: actions/checkout@v2
-
-      - name: Build
-        run: cargo build --target=${{ matrix.target }} --verbose
-
-      - name: Build release
-        run: cargo build --target=${{ matrix.target }} --release --verbose
-
-      - name: Run tests
-        run: cargo test --verbose
-
-      - name: Upload Artifacts
-        uses: actions/upload-artifact@v1
-        with:
-          name: filesorter_rust-${{ matrix.rust }}_${{ matrix.target }}_${{ matrix.os }}
-          path: target/${{ matrix.target }}/release/filesorter.exe
+      - name: Upload release
+          uses: svenstaro/upload-release-action@v1-release
+          with:
+            repo_token: ${{ secrets.GITHUB_TOKEN }}
+            file: target/release/${{ matrix.artifact_name }}
+            asset_name: filesorter-${{ matrix.rust }}-${{ matrix.asset_name }}
+            tag: ${{ github.ref }}
