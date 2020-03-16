@@ -7,7 +7,7 @@ Summary:        Utility for sorting files in directory writen in Rust
 
 License:        GPLv3
 URL:            https://github.com/ElXreno/filesorter
-Source0:        %{url}/archive/%{version}/%{name}-%{version}.tar.gz
+Source0:        %{url}/archive/v%{version}/%{name}-%{version}.tar.gz
 
 ExclusiveArch:  %{rust_arches}
 
