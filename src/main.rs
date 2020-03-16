@@ -4,38 +4,95 @@ extern crate chrono;
 
 use chrono::prelude::*;
 use chrono::DateTime;
-use clap::{App, AppSettings, Arg};
+use clap::{App, AppSettings, Arg, SubCommand};
+use std::path::PathBuf;
 
 mod settings;
 mod utils;
 
 fn main() {
-    // TODO: Add more arguments
-    // TODO: More customizations in settings
     let matches = App::new(crate_name!())
         .version(crate_version!())
         .author(crate_authors!())
         .about(crate_description!())
         .setting(AppSettings::ArgRequiredElseHelp)
-        .arg(
-            Arg::with_name("rewrite-config")
-                .long("rewrite-config")
-                .help("Rewrite default config"),
+        .subcommand(
+            SubCommand::with_name("init")
+                .about("(Re)Initialize configuration file")
+                .arg(
+                    Arg::with_name("source_dir")
+                        .help("Source directory")
+                        .index(1)
+                        .required(true)
+                        .value_name("SOURCE"),
+                )
+                .arg(
+                    Arg::with_name("destination_dir")
+                        .help("Destination directory")
+                        .index(2)
+                        .required(true)
+                        .value_name("DESTINATION"),
+                )
+                .arg(
+                    Arg::with_name("use_date_pattern")
+                        .short("d")
+                        .long("use-date-pattern")
+                        .help("Use date pattern")
+                        .takes_value(false),
+                )
+                .arg(
+                    Arg::with_name("date_pattern")
+                        .short("p")
+                        .long("date-pattern")
+                        .help("Date subdir pattern")
+                        .takes_value(true)
+                        .default_value("%Y-%m-%d"), // 2020-01-01
+                ),
         )
-        .arg(
-            Arg::with_name("sort")
-                .short("s")
-                .long("sort")
-                .help("Runs sorting"),
-        )
+        .subcommand(SubCommand::with_name("sort").about(
+            "Sorting source directory to destination (config file should be initialized first!)",
+        ))
         .get_matches();
 
-    if matches.is_present("rewrite-config") {
-        settings::Settings::rewrite_config();
-    }
+    match matches.subcommand_name() {
+        Some("init") => {
+            if let Some(ref matches) = matches.subcommand_matches("init") {
+                let source_dir =
+                    PathBuf::from(matches.value_of("source_dir").expect("Expected source dir"));
+                let destination_dir = PathBuf::from(
+                    matches
+                        .value_of("destination_dir")
+                        .expect("Expected destination dir"),
+                );
 
-    if matches.is_present("sort") {
-        sort();
+                let use_date_pattern = matches.is_present("use_date_pattern");
+                let date_pattern = matches
+                    .value_of("date_pattern")
+                    .expect("Expected output pattern");
+
+                println!("Source dir: {}", source_dir.display());
+                println!("Destination dir: {}", destination_dir.display());
+                println!("Use date pattern: {}", use_date_pattern);
+                println!("Date pattern: {}", date_pattern);
+
+                let mut settings = settings::Settings::default();
+
+                settings
+                    .source(source_dir)
+                    .destination(destination_dir)
+                    .use_date_pattern(use_date_pattern)
+                    .date_pattern(date_pattern.to_string());
+
+                settings.backup_old_config().save_to_file_warn();
+
+                println!("Initialized successfully!");
+            } else {
+                panic!("No provided arguments!");
+            }
+        }
+        Some("sort") => sort(),
+        None => {}
+        _ => {}
     }
 }
 
@@ -44,14 +101,16 @@ fn sort() {
 
     let settings = settings::Settings::load();
 
-    if !settings.source.is_dir() {
-        panic!("Source path exists but is not a directory! Shutting down...");
+    if settings.source == PathBuf::new() || settings.destination == PathBuf::new() {
+        panic!("Config file not initialized, you should initialize them! Run `filesorter help init` for help.")
+    }
+    if !settings.source.is_dir() || !settings.destination.is_dir() {
+        panic!("Source or destination path exists but is not a directory, exiting...");
     }
 
     utils::create_dirs(vec![&settings.source, &settings.destination]);
 
     let files = utils::get_files(&settings.source);
-
     for file in &files {
         // TODO: Fallback to mime-type detection if file doesn't have extension
 

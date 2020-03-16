@@ -24,10 +24,10 @@ pub struct Settings {
 impl Default for Settings {
     fn default() -> Self {
         Settings {
-            source: PathBuf::from("/home/elxreno/Downloads/"),
-            destination: PathBuf::from("/home/elxreno/Downloads/Sorted"),
+            source: PathBuf::new(),
+            destination: PathBuf::new(),
             use_date_pattern: false,
-            date_pattern: String::from("%Y-%m-%d"), // 2020-01-01
+            date_pattern: String::new(),
             sort_patterns: vec![
                 // Archives
                 SortPattern {
@@ -159,25 +159,27 @@ impl Settings {
         // - The file can't be opened (presumably it doesn't exist)
         // - Or there was an error parsing the file
         let default_settings = Self::default();
-        default_settings.save_to_file_warn();
         default_settings
     }
 
-    pub fn rewrite_config() {
-        let settings_file = Settings::get_settings_path();
-        let settings_file_old = format!("{}.old", &settings_file.display());
-        if Path::new(&settings_file).exists() {
-            match std::fs::rename(&settings_file, &settings_file_old) {
-                Ok(_o) => {
-                    println!("Moved old settings file to {}", &settings_file_old);
-                }
-                Err(e) => panic!("Error {}", e),
-            }
-        } else {
-            println!("Config file doesn't exists, just creating new...")
-        }
+    pub fn source(&mut self, source: PathBuf) -> &mut Self {
+        self.source = source;
+        self
+    }
 
-        Settings::load();
+    pub fn destination(&mut self, destination: PathBuf) -> &mut Self {
+        self.destination = destination;
+        self
+    }
+
+    pub fn use_date_pattern(&mut self, use_date_pattern: bool) -> &mut Self {
+        self.use_date_pattern = use_date_pattern;
+        self
+    }
+
+    pub fn date_pattern(&mut self, date_pattern: String) -> &mut Self {
+        self.date_pattern = date_pattern;
+        self
     }
 
     pub fn save_to_file_warn(&self) {
@@ -197,6 +199,24 @@ impl Settings {
         config_file.write_all(s.as_bytes()).unwrap();
 
         Ok(())
+    }
+
+    pub fn backup_old_config(&self) -> &Self {
+        let settings_file = Settings::get_settings_path();
+        let settings_file_old = format!("{}.old", &settings_file.display());
+        if Path::new(&settings_file).exists() {
+            match std::fs::rename(&settings_file, &settings_file_old) {
+                Ok(_o) => {
+                    println!(
+                        "Moved old settings file to {} successfully",
+                        &settings_file_old
+                    );
+                }
+                Err(e) => panic!("Error {}", e),
+            }
+        }
+
+        self
     }
 
     pub fn get_settings_path() -> PathBuf {
