@@ -1,22 +1,17 @@
 %global debug_package %{nil}
 
-%global commit      51473153746fff335fe20990c29a1bb23e6463ea
-%global shortcommit %(c=%{commit}; echo ${c:0:7})
-%global date        20191110
-
 Name:           filesorter
-Version:        0.1.1
-Release:        3.%{date}git%{shortcommit}%{?dist}
+Version:        0.2.0
+Release:        1%{?dist}
 Summary:        Utility for sorting files in directory writen in Rust
 
 License:        GPLv3
 URL:            https://github.com/ElXreno/filesorter
-Source0:        %{url}/archive/%{commit}/%{name}-%{version}.%{date}git%{shortcommit}.tar.gz
+Source0:        %{url}/archive/%{version}/%{name}-%{version}.tar.gz
 
 ExclusiveArch:  %{rust_arches}
 
 BuildRequires:  rust-packaging
-#Requires:
 
 %description
 Configurable utility writen in Rust for simple sorting files in directory.
@@ -43,6 +38,9 @@ rm -f %{buildroot}%{_prefix}/.crates.toml
 
 
 %changelog
+* Mon Mar 16 2020 ElXreno <elxreno@gmail.com> - 0.2.0-1
+- Updated to version 0.2.0
+
 * Sun Nov 10 2019 ElXreno <elxreno@gmail.com> - 0.1.0-2.20191110git1bd3452
 - Updated to 0.1.1 version
 
