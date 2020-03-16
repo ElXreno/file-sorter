@@ -1,0 +1,49 @@
+name: Rust release
+
+on:
+  push:
+    tags:
+      - '*'
+
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macOS-latest]
+        rust: [stable, nightly]
+        include:
+          - os: ubuntu-latest
+            artifact_name: filesorter
+            asset_name: linux-amd64
+          - os: windows-latest
+            artifact_name: filesorter.exe
+            asset_name: windows-amd64
+          - os: macos-latest
+            artifact_name: filesorter
+            asset_name: macos-amd64
+
+    steps:
+      - name: Set up a Rust toolchain
+        uses: hecrj/setup-rust-action@v1.3.1
+        with:
+          rust-version: ${{ matrix.rust }}
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Build release
+        run: cargo build --release --verbose
+
+      - name: Strip release
+        if: contains(matrix.os, 'ubuntu')
+        run: strip target/release/filesorter
+
+      - name: Upload release
+        if: contains(env.RELEASE_TAG, 'v')
+        uses: svenstaro/upload-release-action@v1-release
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: target/release/${{ matrix.artifact_name }}
+          asset_name: filesorter-${{ matrix.rust }}-${{ matrix.asset_name }}
+          tag: ${{ github.ref }}
+          overwrite: true
