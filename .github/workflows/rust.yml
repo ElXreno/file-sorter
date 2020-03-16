@@ -40,12 +40,3 @@ jobs:
         with:
           name: filesorter-${{ matrix.rust }}-${{ matrix.asset_name }}
           path: target/release/${{ matrix.artifact_name }}
-
-      - name: Upload release
-        if: contains(env.RELEASE_TAG, 'v')
-        uses: svenstaro/upload-release-action@v1-release
-        with:
-          repo_token: ${{ secrets.GITHUB_TOKEN }}
-          file: target/release/${{ matrix.artifact_name }}
-          asset_name: filesorter-${{ matrix.rust }}-${{ matrix.asset_name }}
-          tag: ${{ github.ref }}
