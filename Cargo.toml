@@ -17,14 +17,10 @@ edition = "2018"
 
 
 # Profiles
-[profile.dev]
-opt-level = 0
-panic = "abort"
-
 [profile.release]
-debug = false
-codegen-units = 1
 lto = true
+panic = "abort"
+codegen-units = 1
 
 
 [dependencies]
