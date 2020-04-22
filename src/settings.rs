@@ -70,11 +70,21 @@ impl Default for Settings {
                     ],
                     destination: String::from("images"),
                 },
+                SortPattern {
+                    extensions: vec![
+                        String::from("avi"),
+                        String::from("mkv"),
+                        String::from("mp4"),
+                    ],
+                    destination: String::from("videos"),
+                },
                 // Documents
                 SortPattern {
                     extensions: vec![
                         String::from("csv"),
                         String::from("djvu"),
+                        String::from("doc"),
+                        String::from("docx"),
                         String::from("epub"),
                         String::from("odt"),
                         String::from("pdf"),
