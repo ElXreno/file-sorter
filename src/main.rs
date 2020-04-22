@@ -36,7 +36,7 @@ fn main() {
                 let mut settings = settings::Settings::default();
 
                 settings
-                    .source(source_dir)
+                    .add_source(source_dir)
                     .destination(destination_dir)
                     .use_date_pattern(use_date_pattern)
                     .date_pattern(date_pattern.to_string());
@@ -59,64 +59,77 @@ fn sort() {
 
     let settings = settings::Settings::load();
 
-    if settings.source == PathBuf::new() || settings.destination == PathBuf::new() {
+    if settings.sources.len() == 0 {
         panic!("Config file not initialized, you should initialize them! Run `filesorter help init` for help.")
     }
-    if !settings.source.is_dir() || !settings.destination.is_dir() {
-        panic!("Source or destination path exists but is not a directory, exiting...");
-    }
 
-    utils::create_dirs(vec![&settings.source, &settings.destination]);
-
-    let files = utils::get_files(&settings.source);
-    for file in &files {
-        // TODO: Fallback to mime-type detection if file doesn't have extension
-
-        let file_extension = &file.extension();
-
-        if let None = file_extension {
-            println!(
-                "Failed to get extension for file '{}', skipping it...",
-                &file.display()
+    for source in settings.sources {
+        if !source.is_dir() {
+            panic!(
+                "Source dir {} exists but is not a directory, exiting...",
+                source.display()
             );
-            continue;
+        }
+        if !settings.destination.is_dir() {
+            panic!(
+                "Destination dir {} exists but is not a directory, exiting...",
+                settings.destination.display()
+            );
         }
 
-        let file_extension_str = &file_extension
-            .unwrap()
-            .to_os_string()
-            .into_string()
-            .unwrap()
-            .to_lowercase();
+        utils::create_dirs(vec![&source, &settings.destination]);
 
-        for pattern in &settings.sort_patterns {
-            if pattern.extensions.contains(&file_extension_str) {
-                let destination_dir = if settings.use_date_pattern {
-                    let metadata = std::fs::metadata(&file);
-                    let modify_date = DateTime::<Utc>::from(metadata.unwrap().modified().unwrap());
-                    let date_folder = modify_date.format(&settings.date_pattern).to_string();
+        let files = utils::get_files(&source);
+        for file in &files {
+            // TODO: Fallback to mime-type detection if file doesn't have extension
 
-                    settings
-                        .destination
-                        .join(&date_folder)
-                        .join(&pattern.destination)
-                } else {
-                    settings.destination.join(&pattern.destination)
-                };
+            let file_extension = &file.extension();
 
-                let destination_file = &destination_dir.join(&file.file_name().unwrap());
+            if let None = file_extension {
+                println!(
+                    "Failed to get extension for file '{}', skipping it...",
+                    &file.display()
+                );
+                continue;
+            }
 
-                utils::create_dir(&destination_dir);
-                match std::fs::rename(&file, &destination_file) {
-                    Ok(_o) => println!(
-                        "Successfully moved {} to {}",
-                        &file.display(),
-                        &destination_dir.display()
-                    ),
-                    Err(e) => panic!("Error {}", e),
+            let file_extension_str = &file_extension
+                .unwrap()
+                .to_os_string()
+                .into_string()
+                .unwrap()
+                .to_lowercase();
+
+            for pattern in &settings.sort_patterns {
+                if pattern.extensions.contains(&file_extension_str) {
+                    let destination_dir = if settings.use_date_pattern {
+                        let metadata = std::fs::metadata(&file);
+                        let modify_date =
+                            DateTime::<Utc>::from(metadata.unwrap().modified().unwrap());
+                        let date_folder = modify_date.format(&settings.date_pattern).to_string();
+
+                        settings
+                            .destination
+                            .join(&date_folder)
+                            .join(&pattern.destination)
+                    } else {
+                        settings.destination.join(&pattern.destination)
+                    };
+
+                    let destination_file = &destination_dir.join(&file.file_name().unwrap());
+
+                    utils::create_dir(&destination_dir);
+                    match std::fs::rename(&file, &destination_file) {
+                        Ok(_o) => println!(
+                            "Successfully moved {} to {}",
+                            &file.display(),
+                            &destination_dir.display()
+                        ),
+                        Err(e) => panic!("Error {}", e),
+                    }
+
+                    break;
                 }
-
-                break;
             }
         }
     }

@@ -14,7 +14,7 @@ pub struct SortPattern {
 #[derive(Clone, Debug, Serialize, Deserialize)]
 #[serde(default)]
 pub struct Settings {
-    pub source: PathBuf,
+    pub sources: Vec<PathBuf>,
     pub destination: PathBuf,
     pub use_date_pattern: bool,
     pub date_pattern: String,
@@ -24,7 +24,7 @@ pub struct Settings {
 impl Default for Settings {
     fn default() -> Self {
         Settings {
-            source: PathBuf::new(),
+            sources: vec![],
             destination: PathBuf::new(),
             use_date_pattern: false,
             date_pattern: String::new(),
@@ -162,8 +162,8 @@ impl Settings {
         default_settings
     }
 
-    pub fn source(&mut self, source: PathBuf) -> &mut Self {
-        self.source = source;
+    pub fn add_source(&mut self, source: PathBuf) -> &mut Self {
+        self.sources.push(source);
         self
     }
 
