@@ -5,7 +5,7 @@ Version:        0.2.0
 Release:        1%{?dist}
 Summary:        Utility for sorting files in directory writen in Rust
 
-License:        GPLv3
+License:        MPLv2.0
 URL:            https://github.com/ElXreno/filesorter
 Source0:        %{url}/archive/v%{version}/%{name}-%{version}.tar.gz
 
