@@ -68,15 +68,27 @@ fn sort() {
     }
 
     for source in settings.sources {
+        if !source.exists() {
+            panic!(
+                "Source dir '{}' doesn't exists!",
+                source.display()
+            );
+        }
         if !source.is_dir() {
             panic!(
-                "Source dir {} exists but is not a directory, exiting...",
+                "Source dir '{}' exists but is not a directory, exiting...",
                 source.display()
             );
         }
         if !settings.destination.is_dir() {
             panic!(
-                "Destination dir {} exists but is not a directory, exiting...",
+                "Destination dir '{}' doesn't exists!",
+                settings.destination.display()
+            );
+        }
+        if !settings.destination.is_dir() {
+            panic!(
+                "Destination dir '{}' exists but is not a directory, exiting...",
                 settings.destination.display()
             );
         }
@@ -91,7 +103,7 @@ fn sort() {
 
             if let None = file_extension {
                 println!(
-                    "Failed to get extension for file '{}', skipping it...",
+                    "Failed to get extension for file '{}', skipping...",
                     &file.display()
                 );
                 continue;
