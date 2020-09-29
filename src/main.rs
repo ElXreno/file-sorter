@@ -6,8 +6,6 @@
 extern crate clap;
 extern crate chrono;
 
-use chrono::prelude::*;
-use chrono::DateTime;
 use std::path::PathBuf;
 
 mod settings;
@@ -67,12 +65,9 @@ fn sort() {
         panic!("Config file not initialized, you should initialize them! Run `filesorter help init` for help.")
     }
 
-    for source in settings.sources {
+    for source in &settings.sources {
         if !source.exists() {
-            panic!(
-                "Source dir '{}' doesn't exists!",
-                source.display()
-            );
+            panic!("Source dir '{}' doesn't exists!", source.display());
         }
         if !source.is_dir() {
             panic!(
@@ -97,55 +92,60 @@ fn sort() {
 
         let files = utils::get_files(&source);
         for file in &files {
-            // TODO: Fallback to mime-type detection if file doesn't have extension
+            // Ignore files which starts from dot
+            if let Some(filename) = &file.file_name() {
+                if &filename.to_str().unwrap_or(".")[..1] == "." {
+                    println!("Ignoring file {}", &file.display());
+                    continue;
+                }
 
-            let file_extension = &file.extension();
+                let file_extension = &file.extension();
 
-            if let None = file_extension {
-                println!(
-                    "Failed to get extension for file '{}', skipping...",
-                    &file.display()
-                );
-                continue;
-            }
+                if let None = file_extension {
+                    for pattern in &settings.sort_patterns {
+                        for mime_type in &pattern.mime_types {
+                            if tree_magic::match_filepath(mime_type, &file) {
+                                let destination_dir = utils::get_destination_dir(
+                                    &settings,
+                                    &file,
+                                    &pattern.destination,
+                                );
+                                let destination_file =
+                                    &destination_dir.join(&file.file_name().unwrap());
 
-            let file_extension_str = &file_extension
-                .unwrap()
-                .to_os_string()
-                .into_string()
-                .unwrap()
-                .to_lowercase();
+                                utils::move_file(&file, &destination_dir, &destination_file);
 
-            for pattern in &settings.sort_patterns {
-                if pattern.extensions.contains(&file_extension_str) {
-                    let destination_dir = if settings.use_date_pattern {
-                        let metadata = std::fs::metadata(&file);
-                        let modify_date =
-                            DateTime::<Utc>::from(metadata.unwrap().modified().unwrap());
-                        let date_folder = modify_date.format(&settings.date_pattern).to_string();
+                                break;
 
-                        settings
-                            .destination
-                            .join(&date_folder)
-                            .join(&pattern.destination)
-                    } else {
-                        settings.destination.join(&pattern.destination)
-                    };
-
-                    let destination_file = &destination_dir.join(&file.file_name().unwrap());
-
-                    utils::create_dir(&destination_dir);
-                    match std::fs::rename(&file, &destination_file) {
-                        Ok(_o) => println!(
-                            "Successfully moved {} to {}",
-                            &file.display(),
-                            &destination_dir.display()
-                        ),
-                        Err(e) => panic!("Error {}", e),
+                                // TODO: Think about full stop cycle
+                            }
+                        }
                     }
 
-                    break;
+                    continue;
                 }
+
+                let file_extension_str = &file_extension
+                    .unwrap()
+                    .to_os_string()
+                    .into_string()
+                    .unwrap()
+                    .to_lowercase();
+
+                for pattern in &settings.sort_patterns {
+                    if pattern.extensions.contains(&file_extension_str) {
+                        let destination_dir =
+                            utils::get_destination_dir(&settings, &file, &pattern.destination);
+                        let destination_file = &destination_dir.join(&file.file_name().unwrap());
+
+                        utils::move_file(&file, &destination_dir, &destination_file);
+
+                        break;
+                    }
+                }
+            } else {
+                println!("Failed to proceed file {}", file.display());
+                continue;
             }
         }
     }

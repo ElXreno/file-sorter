@@ -12,6 +12,7 @@ use serde::{Deserialize, Serialize};
 #[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct SortPattern {
     pub extensions: Vec<String>,
+    pub mime_types: Vec<String>,
     pub destination: String,
 }
 
@@ -45,6 +46,7 @@ impl Default for Settings {
                         String::from("zip"),
                         String::from("zst"),
                     ],
+                    mime_types: vec![],
                     destination: String::from("archives"),
                 },
                 // Audio
@@ -56,11 +58,16 @@ impl Default for Settings {
                         String::from("opus"),
                         String::from("wav"),
                     ],
+                    mime_types: vec![],
                     destination: String::from("audio"),
                 },
                 // Binary
                 SortPattern {
                     extensions: vec![String::from("exe"), String::from("bin")],
+                    mime_types: vec![
+                        String::from("application/x-pie-executable"),
+                        String::from("application/x-sharedlib"),
+                    ],
                     destination: String::from("binary"),
                 },
                 // Images
@@ -72,6 +79,7 @@ impl Default for Settings {
                         String::from("png"),
                         String::from("tif"),
                     ],
+                    mime_types: vec![],
                     destination: String::from("images"),
                 },
                 SortPattern {
@@ -80,6 +88,7 @@ impl Default for Settings {
                         String::from("mkv"),
                         String::from("mp4"),
                     ],
+                    mime_types: vec![],
                     destination: String::from("videos"),
                 },
                 // Documents
@@ -96,36 +105,44 @@ impl Default for Settings {
                         String::from("pptx"),
                         String::from("txt"),
                     ],
+                    mime_types: vec![],
                     destination: String::from("docs"),
                 },
                 // Packages
                 SortPattern {
                     extensions: vec![String::from("rpm"), String::from("spec")],
+                    mime_types: vec![],
                     destination: String::from("rpm-packages"),
                 },
                 SortPattern {
                     extensions: vec![String::from("deb")],
+                    mime_types: vec![],
                     destination: String::from("debian-packages"),
                 },
                 SortPattern {
                     extensions: vec![String::from("apk"), String::from("apkx")],
+                    mime_types: vec![],
                     destination: String::from("apks"),
                 },
                 // Other
                 SortPattern {
                     extensions: vec![String::from("torrent")],
+                    mime_types: vec![],
                     destination: String::from("torrents"),
                 },
                 SortPattern {
                     extensions: vec![String::from("jar")],
+                    mime_types: vec![],
                     destination: String::from("jars"),
                 },
                 SortPattern {
                     extensions: vec![String::from("xml")],
+                    mime_types: vec![],
                     destination: String::from("xml"),
                 },
                 SortPattern {
                     extensions: vec![String::from("img")],
+                    mime_types: vec![],
                     destination: String::from("raw"),
                 },
                 SortPattern {
@@ -135,18 +152,22 @@ impl Default for Settings {
                         String::from("woff"),
                         String::from("woff2"),
                     ],
+                    mime_types: vec![],
                     destination: String::from("fonts"),
                 },
                 SortPattern {
                     extensions: vec![String::from("ovpn")],
+                    mime_types: vec![],
                     destination: String::from("openvpn-profiles"),
                 },
                 SortPattern {
                     extensions: vec![String::from("pcap")],
+                    mime_types: vec![],
                     destination: String::from("captured-packages"),
                 },
                 SortPattern {
                     extensions: vec![String::from("vsix")],
+                    mime_types: vec![],
                     destination: String::from("vscode-extensions"),
                 },
             ],

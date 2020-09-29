@@ -2,8 +2,12 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 
+use crate::settings::Settings;
+
+use chrono::prelude::*;
+use chrono::DateTime;
 use clap::{App, AppSettings, Arg, ArgMatches, SubCommand};
-use std::path::PathBuf;
+use std::path::{Path, PathBuf};
 
 pub fn get_arg_matches() -> ArgMatches<'static> {
     App::new(crate_name!())
@@ -81,4 +85,29 @@ pub fn get_files(path: &PathBuf) -> Vec<PathBuf> {
     }
 
     files
+}
+
+pub fn get_destination_dir(settings: &Settings, file: &Path, destination: &String) -> PathBuf {
+    if settings.use_date_pattern {
+        let metadata = std::fs::metadata(file);
+        let modify_date = DateTime::<Utc>::from(metadata.unwrap().modified().unwrap());
+        let date_folder = modify_date.format(&settings.date_pattern).to_string();
+
+        return settings.destination.join(&date_folder).join(destination);
+    } else {
+        return settings.destination.join(destination);
+    }
+}
+
+pub fn move_file(file: &Path, destination_dir: &PathBuf, destination_file: &PathBuf) {
+    create_dir(destination_dir);
+
+    match std::fs::rename(&file, &destination_file) {
+        Ok(_o) => println!(
+            "Successfully moved {} to {}",
+            &file.display(),
+            &destination_dir.display()
+        ),
+        Err(e) => panic!("Error {}", e),
+    }
 }
