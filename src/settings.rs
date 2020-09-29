@@ -155,7 +155,7 @@ impl Settings {
         let path = Settings::get_settings_path();
 
         if let Ok(file) = fs::File::open(&path) {
-            match serde_json::from_reader(file) {
+            match serde_yaml::from_reader(file) {
                 Ok(s) => return s,
                 Err(e) => {
                     println!("Failed to parse setting file! Fallback to default. {}", e);
@@ -209,7 +209,7 @@ impl Settings {
         }
         let mut config_file = fs::File::create(path)?;
 
-        let s: &str = &serde_json::to_string_pretty(self).unwrap();
+        let s: &str = &serde_yaml::to_string(self).unwrap();
         config_file.write_all(s.as_bytes()).unwrap();
 
         Ok(())
@@ -240,6 +240,6 @@ impl Settings {
         proj_dirs
             .config_dir()
             .join("settings")
-            .with_extension("json")
+            .with_extension("yaml")
     }
 }
