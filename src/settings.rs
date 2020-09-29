@@ -145,6 +145,10 @@ impl Default for Settings {
                     extensions: vec![String::from("pcap")],
                     destination: String::from("captured-packages"),
                 },
+                SortPattern {
+                    extensions: vec![String::from("vsix")],
+                    destination: String::from("vscode-extensions"),
+                },
             ],
         }
     }
