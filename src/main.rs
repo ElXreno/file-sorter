@@ -102,7 +102,7 @@ fn sort() {
                 let file_extension = &file.extension();
 
                 if let None = file_extension {
-                    for pattern in &settings.sort_patterns {
+                    'outer: for pattern in &settings.sort_patterns {
                         for mime_type in &pattern.mime_types {
                             if tree_magic::match_filepath(mime_type, &file) {
                                 let destination_dir = utils::get_destination_dir(
@@ -115,9 +115,7 @@ fn sort() {
 
                                 utils::move_file(&file, &destination_dir, &destination_file);
 
-                                break;
-
-                                // TODO: Think about full stop cycle
+                                break 'outer;
                             }
                         }
                     }
