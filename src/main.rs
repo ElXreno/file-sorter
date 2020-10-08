@@ -17,35 +17,18 @@ fn main() {
     match matches.subcommand_name() {
         Some("init") => {
             if let Some(ref matches) = matches.subcommand_matches("init") {
-                let source_dir =
-                    PathBuf::from(matches.value_of("source_dir").expect("Expected source dir"));
-                let destination_dir = PathBuf::from(
+                init(
+                    PathBuf::from(matches.value_of("source_dir").expect("Expected source dir")),
+                    PathBuf::from(
+                        matches
+                            .value_of("destination_dir")
+                            .expect("Expected destination dir"),
+                    ),
+                    matches.is_present("use_date_pattern"),
                     matches
-                        .value_of("destination_dir")
-                        .expect("Expected destination dir"),
-                );
-
-                let use_date_pattern = matches.is_present("use_date_pattern");
-                let date_pattern = matches
-                    .value_of("date_pattern")
-                    .expect("Expected output pattern");
-
-                println!("Source dir: {}", source_dir.display());
-                println!("Destination dir: {}", destination_dir.display());
-                println!("Use date pattern: {}", use_date_pattern);
-                println!("Date pattern: {}", date_pattern);
-
-                let mut settings = settings::Settings::default();
-
-                settings
-                    .add_source(source_dir)
-                    .destination(destination_dir)
-                    .use_date_pattern(use_date_pattern)
-                    .date_pattern(date_pattern.to_string());
-
-                settings.backup_old_config().save_to_file_warn();
-
-                println!("Initialized successfully!");
+                        .value_of("date_pattern")
+                        .expect("Expected output pattern"),
+                )
             } else {
                 panic!("No provided arguments!");
             }
@@ -54,6 +37,25 @@ fn main() {
         None => {}
         _ => {}
     }
+}
+
+fn init(source_dir: PathBuf, destination_dir: PathBuf, use_date_pattern: bool, date_pattern: &str) {
+    println!("Source dir: {}", source_dir.display());
+    println!("Destination dir: {}", destination_dir.display());
+    println!("Use date pattern: {}", use_date_pattern);
+    println!("Date pattern: {}", date_pattern);
+
+    let mut settings = settings::Settings::default();
+
+    settings
+        .add_source(source_dir)
+        .destination(destination_dir)
+        .use_date_pattern(use_date_pattern)
+        .date_pattern(date_pattern.to_string());
+
+    settings.backup_old_config().save_to_file_warn();
+
+    println!("Initialized successfully!");
 }
 
 fn sort() {
